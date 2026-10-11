@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Press Point Media - Developer Handoff Document</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      color: #111827;
+      line-height: 1.6;
+      background: #fff;
+    }
+    h1, h2, h3 {
+      color: #111827;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 28px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 8px;
+    }
+    h2 {
+      font-size: 22px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    p, li {
+      font-size: 14px;
+    }
+    ul, ol {
+      margin-left: 24px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+    }
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f3f4f6;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .section {
+      page-break-inside: avoid;
+      margin-bottom: 18px;
+    }
+    .small {
+      font-size: 12px;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <h1>PRESS POINT MEDIA - DEVELOPER HANDOFF DOCUMENT</h1>
+  <p class="small">Project Type: News platform + Public app + Admin app + Web dashboard<br />Status: Planning and development handoff</p>
+
+  <div class="section">
+    <h2>1. Project Overview</h2>
+    <p>Press Point Media is a multilingual digital news and media platform designed for:</p>
+    <ul>
+      <li>Public readers to consume news, videos, and e-paper</li>
+      <li>Admin and editors to manage content securely</li>
+      <li>A main admin to control access, roles, and publishing</li>
+      <li>A separate secure control app for admin workflows</li>
+      <li>A public-facing website for readers</li>
+    </ul>
+    <p><strong>Important architecture:</strong></p>
+    <ul>
+      <li>Public app = read-only</li>
+      <li>Control app = secure admin access</li>
+      <li>Web dashboard = admin access through browser</li>
+      <li>Backend API = central logic for auth, content, and permissions</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>2. Product Scope</h2>
+
+    <h3>2.1 Public App</h3>
+    <ul>
+      <li>Read-only news app</li>
+      <li>News feed and categories</li>
+      <li>Breaking news section</li>
+      <li>Search</li>
+      <li>Live updates</li>
+      <li>Video viewing</li>
+      <li>E-paper viewing</li>
+      <li>Multilingual interface</li>
+      <li>No admin access</li>
+      <li>No database write access</li>
+    </ul>
+
+    <h3>2.2 Control App / Admin App</h3>
+    <ul>
+      <li>Secure login with email and password</li>
+      <li>Admin and editor roles</li>
+      <li>Create, edit, delete news</li>
+      <li>Upload videos</li>
+      <li>Upload e-paper</li>
+      <li>Publish live updates</li>
+      <li>Manage users and permissions</li>
+      <li>View audit logs</li>
+      <li>Content approval workflow</li>
+    </ul>
+
+    <h3>2.3 Admin Web Dashboard</h3>
+    <ul>
+      <li>Browser-based admin panel</li>
+      <li>User and role assignment</li>
+      <li>Content review</li>
+      <li>News management</li>
+      <li>Media uploads</li>
+      <li>Logs and analytics</li>
+      <li>Desktop workflows</li>
+    </ul>
+
+    <h3>2.4 Public Website</h3>
+    <ul>
+      <li>Public-facing website</li>
+      <li>Latest news and categories</li>
+      <li>Search and article browsing</li>
+      <li>Responsive design</li>
+      <li>Mobile-first layout</li>
+      <li>Public content only</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Security Model</h2>
+    <p><strong>Core principle:</strong> Public app and control app must be completely isolated.</p>
+
+    <p><strong>Security architecture:</strong></p>
+    <ul>
+      <li>Public app = read-only access</li>
+      <li>Control app = authenticated admin access</li>
+      <li>Web dashboard = authenticated admin access</li>
+      <li>Admin actions pass through backend API</li>
+      <li>Public app cannot access admin users, logs, role settings, or private content</li>
+    </ul>
+
+    <p><strong>Authentication model:</strong></p>
+    <ul>
+      <li>Firebase Authentication or JWT-based auth</li>
+      <li>Email/password login for admin</li>
+      <li>Optional MFA for main admin</li>
+      <li>Short-lived access tokens</li>
+      <li>Refresh token support</li>
+      <li>Auto logout after inactivity</li>
+    </ul>
+
+    <p><strong>Roles:</strong></p>
+    <ul>
+      <li>Main Admin: full access</li>
+      <li>Editor: content management in assigned categories</li>
+      <li>Moderator: review and approve content</li>
+      <li>Public User: read-only</li>
+    </ul>
+
+    <p><strong>Authorization rules:</strong></p>
+    <ul>
+      <li>Admin actions must be verified server-side</li>
+      <li>Public app never calls admin APIs</li>
+      <li>Editors cannot manage users or roles</li>
+      <li>Main admin manages user permissions</li>
+      <li>Public app only reads published content</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. Recommended Tech Stack</h2>
+
+    <h3>Frontend</h3>
+    <ul>
+      <li>Public App: Android (Kotlin)</li>
+      <li>Control App: Android (Kotlin)</li>
+      <li>Dashboard: React or plain HTML/CSS/JS</li>
+      <li>Website: HTML/CSS/JS</li>
+    </ul>
+
+    <h3>Backend</h3>
+    <ul>
+      <li>Node.js + Express</li>
+      <li>REST API</li>
+      <li>JWT auth</li>
+      <li>Role-based middleware</li>
+      <li>Rate limiting</li>
+      <li>Request validation</li>
+    </ul>
+
+    <h3>Database</h3>
+    <ul>
+      <li>Firebase Firestore (recommended)</li>
+      <li>Or MongoDB</li>
+      <li>Storage: Firebase Storage or S3</li>
+    </ul>
+
+    <h3>Hosting</h3>
+    <ul>
+      <li>Website: Hostinger</li>
+      <li>API: Render / Railway / VPS</li>
+      <li>Firebase for auth, database, and storage</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5. Project Structure</h2>
+    <pre>PRESS-POINT-MEDIA/
+├── public-app/
+│   ├── Android project
+│   ├── src/
+│   ├── res/
+│   └── build.gradle
+├── control-app/
+│   ├── Android project
+│   ├── src/
+│   ├── res/
+│   └── build.gradle
+├── admin-web-dashboard/
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js
+│   └── pages/
+├── backend-api/
+│   ├── server.js
+│   ├── package.json
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── config/
+│   └── models/
+├── website/
+│   ├── index.html
+│   ├── styles.css
+│   ├── script.js
+│   └── assets/
+├── docs/
+│   ├── developer-doc.md
+│   ├── security-guide.md
+│   └── deployment-guide.md
+├── firebase-config/
+│   ├── firestore-rules.md
+│   └── setup-guide.md
+├── README.md
+├── .gitignore
+├── .env.example
+└── LICENSE</pre>
+  </div>
+
+  <div class="section">
+    <h2>6. Role-Based Permissions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>Access</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Main Admin</td>
+          <td>Full control of content, users, roles, settings, and logs</td>
+        </tr>
+        <tr>
+          <td>Editor</td>
+          <td>Add/edit assigned content, upload media, publish approved content</td>
+        </tr>
+        <tr>
+          <td>Moderator</td>
+          <td>Review and approve content</td>
+        </tr>
+        <tr>
+          <td>Public User</td>
+          <td>Read-only</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Rules:</strong></p>
+    <ul>
+      <li>Main admin creates/removes editors</li>
+      <li>Editors cannot delete admin accounts</li>
+      <li>Public app cannot access admin APIs</li>
+      <li>Server-side checks must validate every role request</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>7. Data Model</h2>
+
+    <h3>Users</h3>
+    <pre>{
+  "id": "user_id",
+  "name": "Admin Name",
+  "email": "admin@example.com",
+  "role": "admin",
+  "status": "active",
+  "createdAt": "timestamp",
+  "lastLogin": "timestamp"
+}</pre>
+
+    <h3>Posts</h3>
+    <pre>{
+  "id": "post_id",
+  "title": "Breaking News",
+  "content": "Article content",
+  "category": "politics",
+  "language": "bn",
+  "status": "published",
+  "featured": true,
+  "createdBy": "user_id",
+  "createdAt": "timestamp",
+  "publishedAt": "timestamp"
+}</pre>
+
+    <h3>Videos</h3>
+    <pre>{
+  "id": "video_id",
+  "title": "Video title",
+  "description": "Video description",
+  "url": "https://...",
+  "category": "news",
+  "language": "en",
+  "status": "published",
+  "uploadedBy": "user_id",
+  "uploadedAt": "timestamp"
+}</pre>
+
+    <h3>E-Paper</h3>
+    <pre>{
+  "id": "epaper_id",
+  "title": "Daily Edition",
+  "date": "2026-10-11",
+  "fileUrl": "https://...",
+  "language": "bn",
+  "uploadedBy": "user_id"
+}</pre>
+
+    <h3>Audit Logs</h3>
+    <pre>{
+  "id": "log_id",
+  "userId": "user_id",
+  "action": "create_post",
+  "entityType": "post",
+  "entityId": "post_id",
+  "timestamp": "datetime",
+  "details": "Created article"
+}</pre>
+  </div>
+
+  <div class="section">
+    <h2>8. Public App Requirements</h2>
+    <p><strong>Purpose:</strong> Display published content only. No login. No write access. No admin access.</p>
+    <ul>
+      <li>Home screen</li>
+      <li>Latest news list</li>
+      <li>Category tabs</li>
+      <li>Article details</li>
+      <li>Search</li>
+      <li>Video section</li>
+      <li>E-paper section</li>
+      <li>Live updates</li>
+      <li>Language selector</li>
+      <li>Read-only access</li>
+    </ul>
+    <p><strong>Important:</strong> Public app must never access admin accounts, audit logs, private admin routes, or editor permission data.</p>
+  </div>
+
+  <div class="section">
+    <h2>9. Control App Requirements</h2>
+    <ul>
+      <li>Email/password login</li>
+      <li>Dashboard</li>
+      <li>News create/edit/delete</li>
+      <li>Video upload</li>
+      <li>E-paper upload</li>
+      <li>Publish live updates</li>
+      <li>User management</li>
+      <li>Role management</li>
+      <li>Audit log view</li>
+      <li>Settings</li>
+      <li>Secure session handling</li>
+    </ul>
+    <p><strong>Security requirements:</strong></p>
+    <ul>
+      <li>Token verification before each sensitive action</li>
+      <li>Audit every important action</li>
+      <li>Rate limiting</li>
+      <li>Access permissions enforced on server</li>
+      <li>MFA for main admin</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>10. Admin Web Dashboard Requirements</h2>
+    <p><strong>Pages:</strong></p>
+    <ul>
+      <li>Login</li>
+      <li>Dashboard overview</li>
+      <li>News management</li>
+      <li>User management</li>
+      <li>Media upload</li>
+      <li>Audit logs</li>
+      <li>Settings</li>
+    </ul>
+    <p><strong>Features:</strong></p>
+    <ul>
+      <li>Responsive layout</li>
+      <li>Review queue</li>
+      <li>Approval workflow</li>
+      <li>User assignment</li>
+      <li>Analytics</li>
+      <li>Modern admin UI</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>11. Website Requirements</h2>
+    <p><strong>Required pages:</strong></p>
+    <ul>
+      <li>Home</li>
+      <li>Categories</li>
+      <li>Article page</li>
+      <li>Search page</li>
+      <li>Video page</li>
+      <li>E-paper archive</li>
+      <li>About / Contact</li>
+      <li>Mobile responsive layout</li>
+    </ul>
+    <p><strong>Functional requirements:</strong></p>
+    <ul>
+      <li>Public content only</li>
+      <li>Mobile-friendly design</li>
+      <li>Fast loading</li>
+      <li>Modern editorial style</li>
+      <li>SEO ready</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>12. API Routes</h2>
+
+    <h3>Public API</h3>
+    <ul>
+      <li>GET /api/public/posts</li>
+      <li>GET /api/public/posts/:id</li>
+      <li>GET /api/public/videos</li>
+      <li>GET /api/public/epapers</li>
+      <li>GET /api/public/live-updates</li>
+      <li>GET /api/public/search</li>
+    </ul>
+
+    <h3>Admin API</h3>
+    <ul>
+      <li>POST /api/admin/auth/login</li>
+      <li>POST /api/admin/auth/logout</li>
+      <li>GET /api/admin/posts</li>
+      <li>POST /api/admin/posts</li>
+      <li>PUT /api/admin/posts/:id</li>
+      <li>DELETE /api/admin/posts/:id</li>
+      <li>POST /api/admin/posts/:id/publish</li>
+      <li>GET /api/admin/videos</li>
+      <li>POST /api/admin/videos</li>
+      <li>GET /api/admin/epapers</li>
+      <li>POST /api/admin/epapers</li>
+      <li>GET /api/admin/users</li>
+      <li>POST /api/admin/users</li>
+      <li>PUT /api/admin/users/:id</li>
+      <li>GET /api/admin/audit-logs</li>
+    </ul>
+    <p><strong>Important:</strong> All admin routes must require valid auth and role validation.</p>
+  </div>
+
+  <div class="section">
+    <h2>13. Backend and Firebase Setup</h2>
+    <p><strong>Recommended:</strong></p>
+    <ul>
+      <li>Firebase Auth</li>
+      <li>Firestore Database</li>
+      <li>Firebase Storage</li>
+      <li>Node.js API</li>
+      <li>JWT validation middleware</li>
+    </ul>
+
+    <p><strong>Environment variables:</strong></p>
+    <pre>FIREBASE_API_KEY=...
+FIREBASE_AUTH_DOMAIN=...
+FIREBASE_PROJECT_ID=...
+FIREBASE_STORAGE_BUCKET=...
+JWT_SECRET=...
+PORT=5000
+NODE_ENV=production</pre>
+
+    <p><strong>Important:</strong></p>
+    <ul>
+      <li>Do not hardcode secrets in the app</li>
+      <li>Never commit .env files</li>
+      <li>Use HTTPS</li>
+      <li>Use server-side validation everywhere</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>14. Security Hardening Checklist</h2>
+    <ul>
+      <li>[ ] Public app and admin app are separated</li>
+      <li>[ ] Public app has no admin routes</li>
+      <li>[ ] Admin routes require auth</li>
+      <li>[ ] Role checks are enforced server-side</li>
+      <li>[ ] MFA enabled for main admin</li>
+      <li>[ ] Password policy enforced</li>
+      <li>[ ] Audit logging enabled</li>
+      <li>[ ] Rate limiting enabled</li>
+      <li>[ ] HTTPS enabled</li>
+      <li>[ ] Secrets stored in env files only</li>
+      <li>[ ] Public users cannot access admin collections</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>15. Launch Checklist</h2>
+
+    <h3>Before launch</h3>
+    <ul>
+      <li>[ ] Firebase project created</li>
+      <li>[ ] Backend API tested</li>
+      <li>[ ] Admin login works</li>
+      <li>[ ] Roles assigned</li>
+      <li>[ ] Public app reads only published content</li>
+      <li>[ ] Control app connects to admin API</li>
+      <li>[ ] Website deployed</li>
+      <li>[ ] Domain connected</li>
+      <li>[ ] SSL active</li>
+      <li>[ ] Logs enabled</li>
+    </ul>
+
+    <h3>App build</h3>
+    <ul>
+      <li>[ ] APK built successfully</li>
+      <li>[ ] App signed with release key</li>
+      <li>[ ] Public app tested</li>
+      <li>[ ] Control app tested</li>
+      <li>[ ] Login flows verified</li>
+      <li>[ ] Upload flows tested</li>
+    </ul>
+
+    <h3>Website launch</h3>
+    <ul>
+      <li>[ ] Files uploaded to hosting</li>
+      <li>[ ] Pages load correctly</li>
+      <li>[ ] Search works</li>
+      <li>[ ] Mobile layout tested</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>16. Deployment Strategy</h2>
+    <p><strong>Recommended:</strong></p>
+    <ul>
+      <li>Website: Hostinger</li>
+      <li>API: Render / Railway / VPS</li>
+      <li>Database: Firebase Firestore</li>
+      <li>App distribution: APK or Play Store</li>
+    </ul>
+
+    <p><strong>Production flow:</strong></p>
+    <ol>
+      <li>Build backend API</li>
+      <li>Configure Firebase auth/database</li>
+      <li>Deploy API</li>
+      <li>Connect public app to public API</li>
+      <li>Connect control app to admin API</li>
+      <li>Deploy website</li>
+      <li>Test all flows</li>
+      <li>Launch</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>17. Final Launch Goal</h2>
+    <p>The final product should include:</p>
+    <ul>
+      <li>Public Android app for readers</li>
+      <li>Secure admin Android app</li>
+      <li>Browser admin dashboard</li>
+      <li>Public website</li>
+      <li>Central backend API</li>
+      <li>Separate public/admin security boundaries</li>
+      <li>Role-based publishing and moderation</li>
+      <li>Media management and logs</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>18. Developer Handoff Summary</h2>
+    <p><strong>Implementation order:</strong></p>
+    <ol>
+      <li>Setup backend API and auth</li>
+      <li>Build database schema and security rules</li>
+      <li>Build admin roles and login</li>
+      <li>Build admin dashboard</li>
+      <li>Build public app</li>
+      <li>Connect public app only to public content</li>
+      <li>Deploy website</li>
+      <li>Build APKs and release</li>
+    </ol>
+    <p>This is the complete technical and product document for the Press Point Media app and website launch.</p>
+  </div>
+
+  <div class="section">
+    <h2>19. Final Note</h2>
+    <p>This project must follow a strict separation between:</p>
+    <ul>
+      <li>public access</li>
+      <li>private admin access</li>
+      <li>secure media management</li>
+      <li>moderation and content approval</li>
+    </ul>
+    <p>This is essential for reliability, privacy, and proper operation.</p>
+  </div>
+</body>
+</html>
